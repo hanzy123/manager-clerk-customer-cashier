@@ -14,8 +14,9 @@ void Customer::operator()(int numCones) {
 
   std::vector<ThreadRAII> clerk_threads;
   for (int i = 0; i < numCones; ++i) {
-    clerk_threads.emplace_back(ThreadRAII(std::thread(Clerk(i), std::ref(clerkDone)),
-                                          ThreadRAII::DtorAction::join));
+		ThreadRAII t(std::thread(Clerk(i), std::ref(clerkDone)),
+		ThreadRAII::DtorAction::join);
+		clerk_threads.emplace_back(std::move(t));
   }
 
   for (int i = 0; i < numCones; ++i) {

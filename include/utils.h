@@ -18,11 +18,12 @@ class ThreadRAII {
 
   ThreadRAII(const ThreadRAII&) = delete;
 	ThreadRAII& operator=(const ThreadRAII&) = delete;
-	
+
   ThreadRAII(ThreadRAII&&) = default;
   ThreadRAII& operator=(ThreadRAII&&) = default;
 
   inline std::thread& get() { return t; }
+	inline DtorAction& getAction() { return this->action; }
 
  private:
   DtorAction action;

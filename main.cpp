@@ -15,11 +15,12 @@ Inspection inspection;
 int main() {
   int totalCones = 0;
 
-  std::vector<ThreadRAII> customer_threads;
+  ThreadRAII customer_threads[num_customer];
   for (int i = 0; i < num_customer; ++i) {
     int numCones = getRandomInt(1, 4);
-    customer_threads[i] = ThreadRAII(std::thread(Customer(i), numCones),
-                                     ThreadRAII::DtorAction::join);
+		
+		customer_threads[i] = ThreadRAII(std::thread(Customer(i), numCones), ThreadRAII::DtorAction::join);
+		
     totalCones += numCones;
   }
 
