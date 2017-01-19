@@ -7,7 +7,7 @@
 #include <thread>
 
 
-const int num_customer =4;
+const int num_customer = 5;
 const int min_num_cone = 1;
 const int max_num_cone = 2;
 Line line(0, 0, 0, 1);
