@@ -7,7 +7,9 @@
 #include <thread>
 
 
-const int num_customer =10;
+const int num_customer =4;
+const int min_num_cone = 1;
+const int max_num_cone = 2;
 Line line(0, 0, 0, 1);
 std::mutex cout_mx;
 Inspection inspection;
@@ -17,7 +19,7 @@ int main() {
 
   ThreadRAII customer_threads[num_customer];
   for (int i = 0; i < num_customer; ++i) {
-    int numCones = getRandomInt(1, 4);
+    int numCones = getRandomInt(min_num_cone, max_num_cone);
 		
 		customer_threads[i] = ThreadRAII(std::thread(Customer(i), numCones), ThreadRAII::DtorAction::join);
 		

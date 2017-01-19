@@ -8,7 +8,7 @@
 Customer::Customer(int id_) : id(id_) {}
 
 void Customer::operator()(int numCones) {
-  atomicCout(cout_mx, "Customer ", id, " is buying ", numCones, " cones ...");
+  atomicCout(cout_mx, "Customer ", id, " is buying ", numCones, " cones ...\n");
 
   Semaphore clerkDone;
 
@@ -23,10 +23,11 @@ void Customer::operator()(int numCones) {
     clerkDone.wait();
   }
 
-  atomicCout(cout_mx, "Customer ", id, " walking to cashier...");
+  atomicCout(cout_mx, "Customer ", id, " walking to cashier...\n");
 
   line.lock.wait();
   int place = line.number++;
+	line.placeToCustomerId.push_back(this->id);
   line.lock.notify();
 
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -34,6 +35,6 @@ void Customer::operator()(int numCones) {
   line.requested.notify();
   line.customer[place]->wait();
 
-  atomicCout(cout_mx, "Customer ", id, " 's shopping DONE!");
+  atomicCout(cout_mx, "Customer ", id, " 's shopping DONE!\n");
 
 }

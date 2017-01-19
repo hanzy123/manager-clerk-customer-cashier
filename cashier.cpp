@@ -7,8 +7,8 @@
 void Cashier::operator()() {
   for (int i = 0; i < num_customer; ++i) {
     line.requested.wait();
-    atomicCout(cout_mx, "Cashier checkout ", i, "th customer...");
+    atomicCout(cout_mx, "Cashier checkout customer ", line.placeToCustomerId[i], " ...\n");
     line.customer[i]->notify();
-    atomicCout(cout_mx, "Cashier DONE ", i, "th customer!");
+    atomicCout(cout_mx, "Cashier DONE customer ", line.placeToCustomerId[i], "!\n");
   }
 }
