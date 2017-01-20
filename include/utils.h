@@ -63,8 +63,8 @@ class Semaphore {
   Semaphore(const Semaphore&) = delete;
   Semaphore& operator=(const Semaphore&) = delete;
 
-  Semaphore(Semaphore&&) = default;
-  Semaphore& operator=(Semaphore&&) = default;
+  Semaphore(Semaphore&&) = delete;
+  Semaphore& operator=(Semaphore&&) = delete;
 
   inline void notify() {
     std::lock_guard<std::mutex> lk(mx);

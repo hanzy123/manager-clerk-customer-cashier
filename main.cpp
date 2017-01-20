@@ -20,9 +20,8 @@ int main() {
   ThreadRAII customer_threads[num_customer];
   for (int i = 0; i < num_customer; ++i) {
     int numCones = getRandomInt(min_num_cone, max_num_cone);
-		
-		customer_threads[i] = ThreadRAII(std::thread(Customer(i), numCones), ThreadRAII::DtorAction::join);
-		
+    customer_threads[i] = ThreadRAII(std::thread(Customer(i), numCones),
+                                     ThreadRAII::DtorAction::join);
     totalCones += numCones;
   }
 
