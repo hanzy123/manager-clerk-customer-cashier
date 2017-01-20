@@ -187,6 +187,67 @@ int main() {
 }
 ```
 
+## 互斥量和信号量
+
+互斥量和信号量的区别。下面这段来自[Quora](https://www.quora.com/What-is-the-difference-between-a-mutex-and-a-semaphore)
+
+> A semaphore or mutex is a multi-threaded flow of control construct
+>that blocks execution of threads under certain conditions. When a
+>mutex or semaphore is available, a thread can acquire the mutex or
+>semaphore and continue execution. When a mutex or semaphore is not
+>available, a thread is blocked from further execution when it
+>attempts to acquire the mutex or semaphore. Threads that have
+>successfully acquired a mutex or semaphore must eventually release it
+>to make it available for another thread. The difference between a
+>mutex and a semaphore is that only one thread at a time can acquire a
+>mutex, but some preset number of threads can concurrently acquire a
+>semaphore. That’s why a mutex is sometimes called a binary
+>semaphore.
+>
+> A mutex is used for mutual exclusion. A region of code that begins
+>with a call to acquire a mutex, and ends with a call to release the
+>same mutex, can only have one thread in the code at a time.
+>
+> A semaphore *is used for* flow control, to restrict the number of
+>threads executing a block of code that begins with a call to acquire
+>the semaphore, and ends with a call to release the semaphore.
+
+简单地说，互斥量是保护临界区。一，防止数据竞争；二，保证某一代码区域互斥访问。信号量是用来线程之间通信，保证有限数量的线程访问数据段或者代码段，必须先得到这个信号量`wait`，用完之后释放`notify`。一个二值的信号量，可以起到与互斥量一样的作用。在c++中，信号量可以用互斥量加上条件变量来实现。
+
+```c++
+class Semaphore {
+ public:
+  explicit Semaphore(int count_ = 0) :
+      count(count_) {}
+
+  Semaphore(const Semaphore&) = delete;
+  Semaphore& operator=(const Semaphore&) = delete;
+
+  Semaphore(Semaphore&&) = delete;
+  Semaphore& operator=(Semaphore&&) = delete;
+
+  inline void notify() {
+    std::lock_guard<std::mutex> lk(mx);
+    ++count;
+    cv.notify_one();
+  }
+
+  inline void wait() {
+    std::unique_lock<std::mutex> lk(mx);
+    cv.wait(lk, [this]() { return count > 0; });
+    --count;
+  }
+ private:
+  std::mutex mx;
+  std::condition_variable cv;
+  int count;
+};
+```
+
+条件变量`cv`和`count`保证了信号量允许多少线程可以同时访问资源，互斥量`mx`保证`count`的原子操作。
+
+因为`std::mutex`既不是可拷贝(Copyable)的，也不是可移动(Movable)的，所以`Semaphore`这个类禁用了拷贝构造函数和移动构造函数。
+
 ## C++代码实现
 
 [1]: https://github.com/xiaoxinyi/manager-clerk-customer-cashier	"C++代码实现"
